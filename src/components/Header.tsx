@@ -48,6 +48,27 @@ function ThemeToggle() {
   )
 }
 
+function HeaderSearch() {
+  const { setSearchOpen } = useUI()
+  return (
+    <button
+      type="button"
+      onClick={() => setSearchOpen(true)}
+      aria-label="Search"
+      className="flex items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-2.5 py-1.5 text-slate-500 transition hover:border-accent-400 hover:text-slate-700 dark:border-slate-700 dark:bg-slate-800/60 dark:text-slate-400 dark:hover:text-slate-200"
+    >
+      <svg className="h-4 w-4" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.6">
+        <circle cx="9" cy="9" r="6" />
+        <path d="m14 14 3 3" strokeLinecap="round" />
+      </svg>
+      <span className="hidden text-sm sm:inline">Search</span>
+      <kbd className="hidden rounded border border-slate-200 px-1.5 py-0.5 text-[10px] font-medium text-slate-400 dark:border-slate-600 md:inline">
+        ⌘K
+      </kbd>
+    </button>
+  )
+}
+
 export default function Header() {
   const { setSidebarOpen } = useUI()
 
@@ -84,6 +105,7 @@ export default function Header() {
         </nav>
 
         <div className="ml-auto flex items-center gap-2 sm:gap-3">
+          <HeaderSearch />
           <select
             aria-label="API version"
             defaultValue="2026-06-30"

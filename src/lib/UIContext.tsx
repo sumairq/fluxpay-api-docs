@@ -10,6 +10,8 @@ interface UIContextValue {
   setSidebarOpen: (open: boolean) => void
   codeOpen: boolean
   setCodeOpen: (open: boolean) => void
+  searchOpen: boolean
+  setSearchOpen: (open: boolean) => void
 }
 
 const UIContext = createContext<UIContextValue | undefined>(undefined)
@@ -17,9 +19,19 @@ const UIContext = createContext<UIContextValue | undefined>(undefined)
 export function UIProvider({ children }: { children: ReactNode }) {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [codeOpen, setCodeOpen] = useState(false)
+  const [searchOpen, setSearchOpen] = useState(false)
 
   return (
-    <UIContext.Provider value={{ sidebarOpen, setSidebarOpen, codeOpen, setCodeOpen }}>
+    <UIContext.Provider
+      value={{
+        sidebarOpen,
+        setSidebarOpen,
+        codeOpen,
+        setCodeOpen,
+        searchOpen,
+        setSearchOpen,
+      }}
+    >
       {children}
     </UIContext.Provider>
   )

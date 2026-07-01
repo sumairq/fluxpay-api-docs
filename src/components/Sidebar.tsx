@@ -6,8 +6,13 @@ import { useUI } from '../lib/UIContext'
 import MethodBadge from './MethodBadge'
 
 function SearchInput() {
+  const { setSearchOpen } = useUI()
   return (
-    <div className="relative">
+    <button
+      type="button"
+      onClick={() => setSearchOpen(true)}
+      className="relative flex w-full items-center rounded-lg border border-slate-200 bg-white py-2 pl-9 pr-3 text-left text-sm text-slate-400 transition hover:border-accent-400 dark:border-slate-700 dark:bg-slate-900"
+    >
       <svg
         className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400"
         viewBox="0 0 20 20"
@@ -18,15 +23,11 @@ function SearchInput() {
         <circle cx="9" cy="9" r="6" />
         <path d="m14 14 3 3" strokeLinecap="round" />
       </svg>
-      <input
-        type="text"
-        placeholder="Search"
-        className="w-full rounded-lg border border-slate-200 bg-white py-2 pl-9 pr-3 text-sm text-slate-700 placeholder:text-slate-400 focus:border-accent-400 focus:outline-none focus:ring-1 focus:ring-accent-400 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200"
-      />
+      Search
       <kbd className="pointer-events-none absolute right-2.5 top-1/2 hidden -translate-y-1/2 rounded border border-slate-200 px-1.5 py-0.5 text-[10px] font-medium text-slate-400 dark:border-slate-700 sm:inline">
         /
       </kbd>
-    </div>
+    </button>
   )
 }
 

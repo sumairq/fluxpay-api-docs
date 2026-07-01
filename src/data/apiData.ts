@@ -862,3 +862,74 @@ export const prismLanguage: Record<CodeLanguage, string> = {
   ruby: 'ruby',
   php: 'php',
 }
+
+// -----------------------------------------------------------------------------
+// Search index
+//
+// A flat, searchable view over the content above. Everything the command
+// palette searches is derived here so there is no duplicated data — extend a
+// page or endpoint and it becomes searchable automatically.
+// -----------------------------------------------------------------------------
+
+export interface SearchDoc {
+  /** Unique key, e.g. "customers#update-customer". */
+  id: string
+  title: string
+  /** e.g. "Core Resources › Customers". */
+  breadcrumb: string
+  /** Present for endpoint docs; drives the method badge in results. */
+  method?: HttpMethod
+  /** Present for endpoint docs, e.g. "/v1/customers/:id". */
+  path?: string
+  description: string
+  /** Navigation target, e.g. "/customers#update-customer". */
+  route: string
+}
+
+function buildSearchDocs(): SearchDoc[] {
+  const docs: SearchDoc[] = []
+
+  // Overview / Introduction.
+  docs.push({
+    id: 'introduction',
+    title: 'Introduction',
+    breadcrumb: 'Getting Started',
+    description: overview.intro,
+    route: '/',
+  })
+  for (const section of overview.sections) {
+    docs.push({
+      id: `introduction#${section.id}`,
+      title: section.heading,
+      breadcrumb: 'Getting Started › Introduction',
+      description: section.body,
+      route: `/#${section.id}`,
+    })
+  }
+
+  // Resource pages and their endpoints.
+  for (const page of Object.values(pages)) {
+    docs.push({
+      id: page.slug,
+      title: page.title,
+      breadcrumb: page.group,
+      description: page.description,
+      route: `/${page.slug}`,
+    })
+    for (const endpoint of page.endpoints) {
+      docs.push({
+        id: `${page.slug}#${endpoint.id}`,
+        title: endpoint.title,
+        breadcrumb: `${page.group} › ${page.title}`,
+        method: endpoint.method,
+        path: endpoint.path,
+        description: endpoint.description,
+        route: `/${page.slug}#${endpoint.id}`,
+      })
+    }
+  }
+
+  return docs
+}
+
+export const searchDocs: SearchDoc[] = buildSearchDocs()

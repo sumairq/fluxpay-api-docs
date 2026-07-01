@@ -9,6 +9,7 @@ import {
 import Header from './components/Header'
 import Sidebar from './components/Sidebar'
 import CodePanel from './components/CodePanel'
+import SearchDialog from './components/SearchDialog'
 import OverviewPage from './pages/OverviewPage'
 import CustomersPage from './pages/CustomersPage'
 import PaymentIntentsPage from './pages/PaymentIntentsPage'
@@ -20,11 +21,27 @@ import { LanguageProvider } from './lib/LanguageContext'
 import { UIProvider } from './lib/UIContext'
 import { ScrollSpyProvider } from './lib/ScrollSpyContext'
 
-function ScrollToTop() {
+function ScrollManager() {
   const { pathname, hash } = useLocation()
   useEffect(() => {
-    // Let in-page anchor jumps behave normally; only reset on page change.
-    if (!hash) window.scrollTo({ top: 0 })
+    if (hash) {
+      // Scroll to the anchor once it exists. On cross-page navigation the
+      // destination sections mount a frame or two later, so retry briefly.
+      // scroll-margin-top (in index.css) offsets for the sticky header.
+      const id = hash.slice(1)
+      let tries = 0
+      const attempt = () => {
+        const el = document.getElementById(id)
+        if (el) {
+          el.scrollIntoView()
+        } else if (tries++ < 10) {
+          requestAnimationFrame(attempt)
+        }
+      }
+      requestAnimationFrame(attempt)
+    } else {
+      window.scrollTo({ top: 0 })
+    }
   }, [pathname, hash])
   return null
 }
@@ -48,6 +65,7 @@ function AppShell() {
         </main>
         <CodePanel />
       </div>
+      <SearchDialog />
     </div>
   )
 }
@@ -59,7 +77,7 @@ export default function App() {
         <UIProvider>
           <BrowserRouter>
             <ScrollSpyProvider>
-              <ScrollToTop />
+              <ScrollManager />
               <AppShell />
             </ScrollSpyProvider>
           </BrowserRouter>
