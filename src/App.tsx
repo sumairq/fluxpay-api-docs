@@ -8,7 +8,6 @@ import {
 } from 'react-router-dom'
 import Header from './components/Header'
 import Sidebar from './components/Sidebar'
-import CodePanel from './components/CodePanel'
 import SearchDialog from './components/SearchDialog'
 import OverviewPage from './pages/OverviewPage'
 import CustomersPage from './pages/CustomersPage'
@@ -29,18 +28,27 @@ function ScrollManager() {
       // destination sections mount a frame or two later, so retry briefly.
       // scroll-margin-top (in index.css) offsets for the sticky header.
       const id = hash.slice(1)
-      let tries = 0
-      const attempt = () => {
+      let frames = 0
+      let lastTop = -1
+      // Re-pin the anchor (instantly, ignoring the global smooth-scroll) until
+      // its position stabilizes, so late layout from Markdoc/Prism can't leave
+      // us off — but stop as soon as it settles to avoid fighting the user.
+      const settle = () => {
         const el = document.getElementById(id)
-        if (el) {
-          el.scrollIntoView()
-        } else if (tries++ < 10) {
-          requestAnimationFrame(attempt)
+        frames++
+        if (!el) {
+          if (frames < 24) requestAnimationFrame(settle)
+          return
+        }
+        el.scrollIntoView({ behavior: 'auto' })
+        if (el.offsetTop !== lastTop && frames < 24) {
+          lastTop = el.offsetTop
+          requestAnimationFrame(settle)
         }
       }
-      requestAnimationFrame(attempt)
+      requestAnimationFrame(settle)
     } else {
-      window.scrollTo({ top: 0 })
+      document.getElementById('content-scroll')?.scrollTo({ top: 0 })
     }
   }, [pathname, hash])
   return null
@@ -48,11 +56,14 @@ function ScrollManager() {
 
 function AppShell() {
   return (
-    <div className="min-h-screen bg-white text-slate-800 dark:bg-slate-900 dark:text-slate-200">
+    <div className="flex h-screen flex-col overflow-hidden bg-white text-stripe-text dark:bg-slate-900 dark:text-slate-200">
       <Header />
-      <div className="flex">
+      <div className="flex min-h-0 flex-1">
         <Sidebar />
-        <main className="min-w-0 flex-1">
+        <main
+          id="content-scroll"
+          className="fluxpay-scroll min-w-0 flex-1 overflow-y-auto bg-white dark:bg-slate-900"
+        >
           <Routes>
             <Route path="/" element={<OverviewPage />} />
             <Route path="/customers" element={<CustomersPage />} />
@@ -63,7 +74,6 @@ function AppShell() {
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </main>
-        <CodePanel />
       </div>
       <SearchDialog />
     </div>

@@ -8,6 +8,10 @@ html {
 
 body {
   margin: 0;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #3c4257;
+  background: #f4f7fa;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -29,7 +33,68 @@ body {
   background: transparent;
 }
 
-/* Offset anchored sections so the sticky header doesn't cover them on jump. */
+/* Content scrolls in its own container (below the fixed header) so the
+   scrollbar stays out of the header. Anchor jumps are handled instantly in JS
+   (ScrollManager), so no smooth-scroll here to conflict with the re-pin loop. */
+
+/* Small offset so anchored sections aren't flush against the container top. */
 [data-endpoint-section] {
-  scroll-margin-top: 6rem;
+  scroll-margin-top: 1.5rem;
+}
+
+/* Prose styling for Markdoc-rendered content. */
+.markdoc p {
+  margin: 0 0 0.75rem;
+}
+.markdoc p:last-child {
+  margin-bottom: 0;
+}
+.markdoc-inline p {
+  margin: 0;
+}
+.markdoc ul,
+.markdoc ol {
+  margin: 0.5rem 0 0.75rem;
+  padding-left: 1.25rem;
+}
+.markdoc ul {
+  list-style: disc;
+}
+.markdoc ol {
+  list-style: decimal;
+}
+.markdoc li {
+  margin: 0.25rem 0;
+}
+.markdoc code {
+  border-radius: 4px;
+  padding: 0.1em 0.35em;
+  font-family: theme('fontFamily.mono');
+  font-size: 0.85em;
+}
+.markdoc :not(pre) > code {
+  background: #f0eefe;
+  color: #4322e0;
+}
+.dark .markdoc :not(pre) > code {
+  background: theme('colors.slate.800');
+  color: theme('colors.accent.300');
+}
+.markdoc a {
+  color: theme('colors.accent.600');
+  font-weight: 500;
+  text-decoration: none;
+}
+.markdoc a:hover {
+  text-decoration: underline;
+}
+.dark .markdoc a {
+  color: theme('colors.accent.400');
+}
+.markdoc strong {
+  font-weight: 600;
+  color: theme('colors.slate.800');
+}
+.dark .markdoc strong {
+  color: theme('colors.slate.100');
 }

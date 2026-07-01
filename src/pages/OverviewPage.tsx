@@ -1,87 +1,91 @@
-import { overview, type Endpoint } from '../data/apiData'
+import { overview } from '../data/apiData'
 import CodeSampleTabs from '../components/CodeSampleTabs'
-import { useRegisterSections } from '../lib/ScrollSpyContext'
+import MarkdocContent from '../markdoc/Markdoc'
+import SectionActions from '../components/SectionActions'
+import OverviewIntroAside from '../components/OverviewIntroAside'
 
-// A synthetic endpoint so the sticky right code panel shows the auth example.
-const authExample: Endpoint = {
-  id: 'authentication',
-  title: 'Example request',
-  method: 'GET',
-  path: '/v1/customers',
-  description: '',
-  parameters: [],
-  code: overview.code,
-  response: overview.response,
-}
+const sectionGrid =
+  'grid grid-cols-1 gap-x-16 gap-y-6 py-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]'
 
 export default function OverviewPage() {
-  useRegisterSections([authExample])
+  const bareUrl = overview.baseUrl.replace(/^https?:\/\//, '')
 
   return (
-    <div className="mx-auto max-w-3xl px-5 py-10 sm:px-8">
-      <div className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-accent-600 dark:text-accent-400">
-        Introduction
-      </div>
-      <h1 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-white">
-        {overview.title}
-      </h1>
-      <p className="mt-3 text-[15px] leading-relaxed text-slate-600 dark:text-slate-300">
-        {overview.intro}
-      </p>
-
-      <div className="mt-6 rounded-xl border border-slate-200 bg-slate-50 p-4 dark:border-slate-800 dark:bg-slate-800/40">
-        <div className="text-[11px] font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">
-          Base URL
-        </div>
-        <code className="mt-1 block font-mono text-sm text-accent-700 dark:text-accent-300">
-          {overview.baseUrl}
-        </code>
-      </div>
-
-      {/* Section: the synthetic auth example anchors here for scroll-spy. */}
-      <section
-        id={authExample.id}
-        data-endpoint-section
-        data-endpoint-id={authExample.id}
-        className="mt-4"
-      >
-        {overview.sections.map((section) => (
-          <div key={section.id} id={section.id} className="py-8">
-            <h2 className="text-xl font-semibold text-slate-900 dark:text-white">
-              {section.heading}
-            </h2>
-            {section.body.split('\n\n').map((para, i) => (
-              <p
-                key={i}
-                className="mt-3 text-[15px] leading-relaxed text-slate-600 dark:text-slate-300"
-              >
-                {para.split(/(fpk_test_|fpk_live_|starting_after|ending_before|limit)/).map((chunk, j) =>
-                  /^(fpk_test_|fpk_live_|starting_after|ending_before|limit)$/.test(chunk) ? (
-                    <code
-                      key={j}
-                      className="rounded bg-slate-100 px-1 py-0.5 font-mono text-[13px] text-accent-700 dark:bg-slate-800 dark:text-accent-300"
-                    >
-                      {chunk}
-                    </code>
-                  ) : (
-                    <span key={j}>{chunk}</span>
-                  ),
-                )}
-              </p>
-            ))}
+    <div className="mx-auto max-w-[1540px] px-6 pt-12 sm:px-10 lg:px-14">
+      <div className="divide-y divide-stripe-border dark:divide-slate-800">
+        {/* Introduction */}
+        <section id="introduction" data-endpoint-section className={sectionGrid}>
+          <div>
+            <h1 className="text-[28px] font-bold leading-tight tracking-tight text-stripe-head dark:text-white">
+              {overview.title}
+            </h1>
+            <MarkdocContent
+              source={overview.intro}
+              className="mt-4 text-[14px] leading-relaxed text-stripe-text dark:text-slate-300"
+            />
+            <div className="mt-8 flex items-center gap-2 text-[13px] text-stripe-muted dark:text-slate-400">
+              Was this section helpful?
+              <button type="button" onClick={(e) => e.preventDefault()} className="font-medium text-accent-500 hover:text-accent-600">
+                Yes
+              </button>
+              <button type="button" onClick={(e) => e.preventDefault()} className="font-medium text-accent-500 hover:text-accent-600">
+                No
+              </button>
+            </div>
           </div>
-        ))}
+          <div>
+            <SectionActions />
+            <OverviewIntroAside baseUrl={bareUrl} />
+          </div>
+        </section>
 
-        {/* Inline code on mobile (sticky panel handles desktop). */}
-        <div className="mt-2 lg:hidden">
-          <CodeSampleTabs
-            code={authExample.code}
-            response={authExample.response}
-            method={authExample.method}
-            path={authExample.path}
-          />
-        </div>
-      </section>
+        {/* All remaining getting-started sections */}
+        {overview.sections.map((section) => (
+          <section
+            key={section.id}
+            id={section.id}
+            data-endpoint-section
+            className={sectionGrid}
+          >
+            <div>
+              <h2 className="text-[22px] font-semibold text-stripe-head dark:text-white">
+                {section.heading}
+              </h2>
+              <MarkdocContent
+                source={section.body}
+                className="mt-3 text-[14px] leading-relaxed text-stripe-text dark:text-slate-300"
+              />
+            </div>
+            <div>
+              <SectionActions />
+              {section.code && (
+                <div className="lg:sticky lg:top-6">
+                  <CodeSampleTabs
+                    code={section.code}
+                    response={section.response ?? ''}
+                    method={section.method ?? 'GET'}
+                    path={section.path ?? '/v1'}
+                    label={section.heading}
+                  />
+                </div>
+              )}
+            </div>
+          </section>
+        ))}
+      </div>
+
+      {/* Footer */}
+      <footer className="mt-4 flex items-center justify-end gap-1.5 border-t border-stripe-border py-6 text-[12px] text-stripe-faint dark:border-slate-800 dark:text-slate-500">
+        Powered by
+        <a
+          href="https://markdoc.dev"
+          target="_blank"
+          rel="noreferrer"
+          className="font-medium text-stripe-muted hover:text-stripe-head dark:text-slate-400"
+        >
+          Markdoc
+        </a>
+      </footer>
     </div>
   )
 }

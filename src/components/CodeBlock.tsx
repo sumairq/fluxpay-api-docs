@@ -1,64 +1,56 @@
-import { useState } from 'react'
 import { Highlight, type PrismTheme } from 'prism-react-renderer'
 
-// A custom near-black theme so code blocks stay dark regardless of site theme,
-// with teal-leaning accents to match the Fluxpay brand.
+// Syntax theme matching Stripe's docs code panel (colors measured from the
+// live site): white text on #3e444f, blue keywords, green strings, orange
+// numbers/booleans, light-grey punctuation.
 const fluxpayTheme: PrismTheme = {
   plain: {
-    color: '#e2e8f0',
+    color: '#ffffff',
     backgroundColor: 'transparent',
   },
   styles: [
-    { types: ['comment', 'prolog', 'doctype', 'cdata'], style: { color: '#64748b', fontStyle: 'italic' } },
-    { types: ['punctuation'], style: { color: '#94a3b8' } },
-    { types: ['property', 'tag', 'boolean', 'number', 'constant', 'symbol', 'deleted'], style: { color: '#f0abfc' } },
-    { types: ['selector', 'attr-name', 'string', 'char', 'builtin', 'inserted'], style: { color: '#5eead4' } },
-    { types: ['operator', 'entity', 'url', 'variable'], style: { color: '#e2e8f0' } },
-    { types: ['atrule', 'attr-value', 'keyword'], style: { color: '#7dd3fc' } },
-    { types: ['function', 'class-name'], style: { color: '#fdba74' } },
-    { types: ['regex', 'important'], style: { color: '#fca5a5' } },
+    { types: ['comment', 'prolog', 'doctype', 'cdata'], style: { color: '#8b95a5', fontStyle: 'italic' } },
+    { types: ['punctuation'], style: { color: '#c9ced8' } },
+    { types: ['string', 'char', 'attr-value', 'inserted'], style: { color: '#4bca2e' } },
+    { types: ['number', 'boolean', 'constant', 'symbol'], style: { color: '#ff9926' } },
+    { types: ['keyword', 'atrule', 'selector', 'deleted', 'important'], style: { color: '#4abcf9' } },
+    { types: ['property', 'tag', 'operator', 'variable', 'function', 'class-name', 'builtin', 'attr-name', 'entity'], style: { color: '#ffffff' } },
+    { types: ['url', 'regex'], style: { color: '#4bca2e' } },
   ],
 }
 
 export default function CodeBlock({
   code,
   language,
+  lineNumbers = false,
 }: {
   code: string
   language: string
+  lineNumbers?: boolean
 }) {
-  const [copied, setCopied] = useState(false)
-
-  const copy = async () => {
-    try {
-      await navigator.clipboard.writeText(code)
-      setCopied(true)
-      setTimeout(() => setCopied(false), 1500)
-    } catch {
-      /* clipboard unavailable */
-    }
-  }
-
   return (
     <div className="group relative">
-      <button
-        type="button"
-        onClick={copy}
-        className="absolute right-3 top-3 z-10 rounded-md border border-white/10 bg-white/5 px-2 py-1 text-[11px] font-medium text-slate-300 opacity-0 transition hover:bg-white/10 group-hover:opacity-100"
-      >
-        {copied ? 'Copied' : 'Copy'}
-      </button>
       <Highlight theme={fluxpayTheme} code={code} language={language}>
         {({ className, style, tokens, getLineProps, getTokenProps }) => (
           <pre
-            className={`fluxpay-scroll overflow-x-auto px-4 py-4 font-mono text-[13px] leading-relaxed ${className}`}
+            className={`fluxpay-scroll overflow-x-auto px-4 py-3 font-mono text-[14px] leading-[1.4] ${className}`}
             style={{ ...style, backgroundColor: 'transparent' }}
           >
             {tokens.map((line, i) => (
-              <div key={i} {...getLineProps({ line })}>
-                {line.map((token, key) => (
-                  <span key={key} {...getTokenProps({ token })} />
-                ))}
+              <div key={i} {...getLineProps({ line })} className="flex">
+                {lineNumbers && (
+                  <span
+                    aria-hidden
+                    className="mr-4 inline-block w-4 shrink-0 select-none text-right text-[#7a8494]"
+                  >
+                    {i + 1}
+                  </span>
+                )}
+                <span className="min-w-0 flex-1">
+                  {line.map((token, key) => (
+                    <span key={key} {...getTokenProps({ token })} />
+                  ))}
+                </span>
               </div>
             ))}
           </pre>

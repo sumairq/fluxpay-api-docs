@@ -5,30 +5,30 @@ export default function ParamsTable({ params }: { params: Param[] }) {
 
   return (
     <div className="mt-6">
-      <div className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">
+      <div className="mb-1 text-[13px] font-semibold text-stripe-head dark:text-slate-200">
         Parameters
       </div>
-      <div className="divide-y divide-slate-200 border-t border-slate-200 dark:divide-slate-800 dark:border-slate-800">
+      <div className="divide-y divide-stripe-border border-t border-stripe-border dark:divide-slate-800 dark:border-slate-800">
         {params.map((param) => (
-          <div key={param.name} className="grid grid-cols-1 gap-1 py-3 sm:grid-cols-[minmax(0,14rem)_1fr] sm:gap-6">
+          <div key={param.name} className="py-3">
             <div className="flex flex-wrap items-baseline gap-x-2">
-              <code className="font-mono text-sm font-semibold text-slate-800 dark:text-slate-100">
+              <code className="font-mono text-[13px] font-semibold text-stripe-head dark:text-slate-100">
                 {param.name}
               </code>
-              <span className="font-mono text-xs text-slate-400 dark:text-slate-500">
+              <span className="text-[12px] text-stripe-muted dark:text-slate-500">
                 {param.type}
               </span>
-              <span
-                className={
-                  param.required
-                    ? 'text-[11px] font-medium uppercase tracking-wide text-accent-600 dark:text-accent-400'
-                    : 'text-[11px] uppercase tracking-wide text-slate-400 dark:text-slate-500'
-                }
-              >
-                {param.required ? 'Required' : 'Optional'}
-              </span>
+              {param.required ? (
+                <span className="text-[12px] font-medium text-[#b3093c] dark:text-red-300">
+                  Required
+                </span>
+              ) : (
+                <span className="text-[12px] text-stripe-faint dark:text-slate-500">
+                  Optional
+                </span>
+              )}
             </div>
-            <p className="text-sm leading-relaxed text-slate-600 dark:text-slate-300">
+            <p className="mt-1 text-[13px] leading-relaxed text-stripe-text dark:text-slate-300">
               {param.description}
             </p>
           </div>

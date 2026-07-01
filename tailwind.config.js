@@ -5,37 +5,61 @@ export default {
   theme: {
     extend: {
       colors: {
+        // Stripe "blurple" — links, active states, highlights.
         accent: {
-          50: '#effcf9',
-          100: '#c7f5ec',
-          200: '#8fecda',
-          300: '#5bddc6',
-          400: '#2ec4ac',
-          500: '#14a894',
-          600: '#0d8778',
-          700: '#106b60',
-          800: '#12554e',
-          900: '#134741',
-          950: '#042b28',
+          50: '#f0eefe',
+          100: '#e6e1fd',
+          200: '#cabffb',
+          300: '#a794f8',
+          400: '#7d63f4',
+          500: '#533afd',
+          600: '#4322e0',
+          700: '#3a1fc0',
+          800: '#2f1a99',
+          900: '#281778',
+          950: '#1a0e52',
+        },
+        // Stripe's exact neutral scale (from the Stripe design tokens).
+        stripe: {
+          page: '#F4F7FA', // 50
+          hover: '#ECF1F6', // 100
+          border: '#D4DEE9', // 200
+          text: '#3c4257', // body (Stripe's rendered body color)
+          head: '#1A2C44', // 950
+          muted: '#667691', // 600
+          faint: '#95A4BA', // 400
+          100: '#ECF1F6',
+          200: '#D4DEE9',
+          300: '#BAC8DA',
+          400: '#95A4BA',
+          500: '#7D8BA4',
+          600: '#667691',
+          700: '#50617A',
+          800: '#3C4F69',
+          900: '#273951',
+          950: '#1A2C44',
+        },
+        // Dark code panel — lighter header bar over a darker code body (Stripe).
+        code: {
+          bg: '#3e444f',
+          header: '#505865',
+          border: '#5a626f',
         },
       },
       fontFamily: {
         sans: [
-          'Inter',
-          'ui-sans-serif',
-          'system-ui',
           '-apple-system',
+          'BlinkMacSystemFont',
           'Segoe UI',
           'Roboto',
           'Helvetica Neue',
-          'Arial',
+          'Ubuntu',
           'sans-serif',
         ],
         mono: [
-          'JetBrains Mono',
-          'ui-monospace',
-          'SFMono-Regular',
+          'Source Code Pro',
           'Menlo',
+          'Monaco',
           'Consolas',
           'Liberation Mono',
           'monospace',
